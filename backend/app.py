@@ -22,6 +22,10 @@ analyzer = IngredientAnalyzer()
 def index():
     return render_template("index.html")
 
+@app.route("/compare")
+def compare():
+    return render_template("compare.html")
+
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
     """
@@ -141,6 +145,96 @@ def analyze_direct():
         print(f"❌ Error during direct analysis: {e}")
         return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
 
+
+@app.route("/api/compare", methods=["POST"])
+def compare_products():
+    """
+    Compare two products side-by-side
+    Returns analysis for both products and determines the healthier one
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    # Get product 1 data
+    product_1_data = data.get("product_1", {})
+    product_1_name = product_1_data.get("product_name", "").strip()
+    product_1_category = product_1_data.get("category", "snacks").lower()
+    product_1_ingredients = product_1_data.get("ingredients", "").strip()
+
+    # Get product 2 data
+    product_2_data = data.get("product_2", {})
+    product_2_name = product_2_data.get("product_name", "").strip()
+    product_2_category = product_2_data.get("category", "snacks").lower()
+    product_2_ingredients = product_2_data.get("ingredients", "").strip()
+
+    # Validate inputs
+    if not product_1_name or not product_2_name:
+        return jsonify({"error": "Both product names are required"}), 400
+
+    valid_categories = ["snacks", "biscuits", "juice"]
+    if product_1_category not in valid_categories or product_2_category not in valid_categories:
+        return jsonify({"error": f"Category must be one of: {', '.join(valid_categories)}"}), 400
+
+    try:
+        # Analyze Product 1
+        print(f"🔍 Analyzing product 1: {product_1_name}")
+        if product_1_ingredients:
+            print(f"✅ Using direct ingredients for: {product_1_name}")
+            ingredients_1 = product_1_ingredients
+            actual_name_1 = product_1_name
+        else:
+            groq_result_1 = get_ingredients_from_groq(product_1_name, product_1_category)
+            if groq_result_1.get("ingredients", "").strip():
+                ingredients_1 = groq_result_1.get("ingredients", "")
+                actual_name_1 = groq_result_1.get("product_name", product_1_name)
+                print(f"✅ Found ingredients for: {actual_name_1}")
+            else:
+                return jsonify({
+                    "error": f"Could not find '{product_1_name}' in database",
+                    "suggestion": "Try a different product name or provide ingredients manually"
+                }), 400
+
+        # Analyze Product 2
+        print(f"🔍 Analyzing product 2: {product_2_name}")
+        if product_2_ingredients:
+            print(f"✅ Using direct ingredients for: {product_2_name}")
+            ingredients_2 = product_2_ingredients
+            actual_name_2 = product_2_name
+        else:
+            groq_result_2 = get_ingredients_from_groq(product_2_name, product_2_category)
+            if groq_result_2.get("ingredients", "").strip():
+                ingredients_2 = groq_result_2.get("ingredients", "")
+                actual_name_2 = groq_result_2.get("product_name", product_2_name)
+                print(f"✅ Found ingredients for: {actual_name_2}")
+            else:
+                return jsonify({
+                    "error": f"Could not find '{product_2_name}' in database",
+                    "suggestion": "Try a different product name or provide ingredients manually"
+                }), 400
+
+        # Perform analysis on both
+        print(f"🔬 Analyzing ingredients for both products")
+        analysis_1 = analyzer.analyze(ingredients_1, actual_name_1, product_1_category)
+        analysis_2 = analyzer.analyze(ingredients_2, actual_name_2, product_2_category)
+
+        # Determine winner (higher health score is better)
+        score_1 = analysis_1.get("health_score", 0)
+        score_2 = analysis_2.get("health_score", 0)
+        winner = "product_1" if score_1 >= score_2 else "product_2"
+
+        print(f"✅ Comparison complete. Product 1: {score_1:.1f}, Product 2: {score_2:.1f}")
+
+        return jsonify({
+            "product_1": analysis_1,
+            "product_2": analysis_2,
+            "winner": winner,
+            "score_difference": abs(score_1 - score_2)
+        })
+
+    except Exception as e:
+        print(f"❌ Error during comparison: {e}")
+        return jsonify({"error": f"Comparison failed: {str(e)}"}), 500
 
 
 @app.route("/api/products/sample", methods=["GET"])

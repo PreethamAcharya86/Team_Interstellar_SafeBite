@@ -5,11 +5,17 @@ Handles ingredient extraction from Open Food Facts and healthier alternatives re
 
 import json
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
 
 # Load environment variables from .env file (override system variables)
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'), override=True)
+# Use absolute path to ensure .env is found regardless of how module is imported
+env_path = Path(__file__).parent.parent / '.env'
+if env_path.exists():
+    load_dotenv(env_path, override=True)
+else:
+    print(f"Warning: .env file not found at {env_path}")
 
 # Initialize Groq client
 try:
