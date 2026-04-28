@@ -121,11 +121,8 @@ def analyze_direct():
     if category not in valid_categories:
         return jsonify({"error": f"Category must be one of: {', '.join(valid_categories)}"}), 400
 
-    try:
-        # Analyze ingredients directly
+    try: 
         analysis_result = analyzer.analyze(ingredients, product_name, category)
-        
-        # Get alternatives using rule-based approach
         groq_alternatives = get_healthier_alternatives_from_groq(product_name, category, analysis_result.get("harmful_count", 0))
         
         if groq_alternatives and len(groq_alternatives) > 0:

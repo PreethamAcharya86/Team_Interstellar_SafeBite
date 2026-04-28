@@ -5,13 +5,17 @@ Handles ingredient extraction from Open Food Facts and healthier alternatives re
 
 import json
 import os
+from dotenv import load_dotenv
 from groq import Groq
+
+# Load environment variables from .env file (override system variables)
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'), override=True)
 
 # Initialize Groq client
 try:
     client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 except Exception as e:
-    print(f"Warning: Groq client initialization failed. Make sure GROQ_API_KEY is set: {e}")
+    print(f"Warning: Groq client initialization failed. Make sure GROQ_API_KEY is set in .env file: {e}")
     client = None
 
 def get_ingredients_from_groq(product_name: str, category: str) -> dict:
@@ -31,7 +35,7 @@ def get_ingredients_from_groq(product_name: str, category: str) -> dict:
             "ingredients": "",
             "brand": "Unknown",
             "found": False,
-            "error": "Groq API not configured. Set GROQ_API_KEY environment variable.",
+            "error": "Groq API not configured. Set GROQ_API_KEY in .env file in the main FoodAnalyzer folder.",
             "fallback": True
         }
     
