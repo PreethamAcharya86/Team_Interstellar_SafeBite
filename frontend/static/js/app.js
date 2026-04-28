@@ -254,6 +254,22 @@ function renderResults(data) {
   }, 100);
 }
 
+const buttons = document.querySelectorAll(".category-btn");
+const hiddenInput = document.getElementById("category");
+
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    // remove active from all
+    buttons.forEach(b => b.classList.remove("active"));
+
+    // add active to clicked
+    btn.classList.add("active");
+
+    // set value for form submission
+    hiddenInput.value = btn.dataset.value;
+  });
+});
+
 // ── Risk Chart ────────────────────────────────────────────────
 function renderRiskChart(risk_counts) {
   const ctx = document.getElementById("riskChart").getContext("2d");

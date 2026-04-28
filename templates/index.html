@@ -83,14 +83,28 @@
               <input type="text" id="productName" placeholder="e.g. Kurkure Masala Munch" required />
             </div>
             <div class="form-group">
-              <label for="category">Category <span class="required">*</span></label>
-              <select id="category" required>
-                <option value="">Select category</option>
-                <option value="snacks">🍟 Snacks</option>
-                <option value="biscuits">🍪 Biscuits</option>
-                <option value="juice">🥤 Juice</option>
-              </select>
-            </div>
+  <label>Category <span class="required">*</span></label>
+
+  <div class="category-buttons" id="categoryButtons">
+    <button type="button" class="category-btn" data-value="snacks">
+      <img src="/static/images/snacks.jpg" alt="Snacks">
+      <span>Snacks</span>
+    </button>
+
+    <button type="button" class="category-btn" data-value="biscuits">
+      <img src="/static/images/biscuits.jpg" alt="Biscuits">
+      <span>Biscuits</span>
+    </button>
+
+    <button type="button" class="category-btn" data-value="juice">
+      <img src="/static/images/juice.jpg" alt="Juice">
+      <span>Juice</span>
+    </button>
+  </div>
+
+  <!-- Hidden input to keep backend same -->
+  <input type="hidden" id="category" required>
+</div>
           </div>
 
           <div class="form-actions">
@@ -157,7 +171,7 @@
     <div id="loadingOverlay" class="loading-overlay hidden">
       <div class="loading-card">
         <div class="spinner"></div>
-        <p>Fetching ingredients & analyzing with AI…</p>
+        <p>Fetching ingredients & Analyzing with AI…</p>
       </div>
     </div>
   </main>
