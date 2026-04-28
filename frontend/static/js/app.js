@@ -255,7 +255,55 @@ function renderResults(data) {
 }
 
 // ── Risk Chart ────────────────────────────────────────────────
+function renderRiskChart(risk_counts) {
+  const ctx = document.getElementById("riskChart").getContext("2d");
 
+  if (riskChartInstance) {
+    riskChartInstance.destroy();
+  }
+
+  const safe = (risk_counts.safe || 0) + (risk_counts.low || 0);
+  const medium = risk_counts.medium || 0;
+  const high = risk_counts.high || 0;
+
+  riskChartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Safe / Low Risk", "Medium Risk", "High Risk"],
+      datasets: [
+        {
+          data: [safe, medium, high],
+          backgroundColor: ["#43A047", "#FFA726", "#EF5350"],
+          borderColor: ["#2E7D32", "#E65100", "#C62828"],
+          borderWidth: 1.5,
+          borderRadius: 6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.raw} ingredient${ctx.raw !== 1 ? "s" : ""}`,
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, font: { family: "'DM Sans'" } },
+          grid: { color: "#F0EDE8" },
+        },
+        x: {
+          ticks: { font: { family: "'DM Sans'", size: 12 } },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+}
 
 // ── Helpers ───────────────────────────────────────────────────
 function getColorClass(score) {
