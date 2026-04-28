@@ -839,11 +839,13 @@ textarea:focus {
   font-size: 14px;
   font-weight: 500;
   padding: 8px 16px;
+  background-color: #19802ed5;
+  border: 2px solid rgb(148, 104, 15);
   border-radius: 6px;
   transition: all 0.2s;
 }
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background-color: rgba(77, 219, 84, 0.614);
   color: #fff;
 }
 

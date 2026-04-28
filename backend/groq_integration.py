@@ -21,21 +21,24 @@ else:
 try:
     client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 except Exception as e:
-    print(f"Warning: Groq client initialization failed. Make sure GROQ_API_KEY is set in .env file: {e}")
+    print(
+        f"Warning: Groq client initialization failed. Make sure GROQ_API_KEY is set in .env file: {e}")
     client = None
+
 
 def get_ingredients_from_groq(product_name: str, category: str) -> dict:
     """
     Get ingredient list for a product from Open Food Facts database using Groq
-    
+
     Args:
         product_name: Name of the food product
         category: Category of product (snacks, biscuits, juice)
-    
+
     Returns:
         dict with ingredient list and product details
     """
     if not client:
+        print("Error: Groq API client not initialized. Check GROQ_API_KEY in .env file.")
         return {
             "product_name": product_name,
             "ingredients": "",
@@ -44,7 +47,11 @@ def get_ingredients_from_groq(product_name: str, category: str) -> dict:
             "error": "Groq API not configured. Set GROQ_API_KEY in .env file in the main FoodAnalyzer folder.",
             "fallback": True
         }
-    
+
+    print(
+        f"Requesting ingredients for '{product_name}' in category '{category}'")
+    print("Sending request to Groq API...")
+
     try:
         message = client.chat.completions.create(
             model="llama-3.1-8b-instant",
@@ -68,12 +75,15 @@ If no product found even after searching similar names, use "found": false and p
                 }
             ]
         )
-        
+
         response_text = message.choices[0].message.content.strip()
-        
+
+        # Log the response for debugging
+        print(f"Groq API response: {response_text}")
+
         # Try to parse JSON response
         result = json.loads(response_text)
-        
+
         # Check if ingredients are actually found and not empty
         if result.get("found") and result.get("ingredients", "").strip():
             return result
@@ -81,7 +91,7 @@ If no product found even after searching similar names, use "found": false and p
             # If Groq couldn't find it, still return the data but mark as fallback-needed
             result["fallback"] = True
             return result
-            
+
     except json.JSONDecodeError as e:
         print(f"JSON parse error: {e}")
         # Fallback if JSON parsing fails
@@ -108,21 +118,21 @@ If no product found even after searching similar names, use "found": false and p
 def get_healthier_alternatives_from_groq(product_name: str, category: str, harmful_count: int = 0) -> list:
     """
     Get healthier alternatives for a product using Groq
-    
+
     Args:
         product_name: Name of the food product
         category: Category of product (snacks, biscuits, juice)
         harmful_count: Number of harmful ingredients found (helps prioritize cleaner options)
-    
+
     Returns:
         list of healthier alternatives
     """
     if not client:
         return []
-    
+
     try:
         priority = "very clean and natural options" if harmful_count > 0 else "healthier alternatives"
-        
+
         message = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             max_tokens=600,
@@ -150,9 +160,9 @@ Guidelines:
                 }
             ]
         )
-        
+
         response_text = message.choices[0].message.content.strip()
-        
+
         # Try to parse JSON response
         alternatives = json.loads(response_text)
         return alternatives if isinstance(alternatives, list) else []

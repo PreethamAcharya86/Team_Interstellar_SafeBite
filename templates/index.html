@@ -1,77 +1,89 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SafeBite — Indian Food Safety Analyzer</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/static/css/style.css" />
-  </head>
-  <body>
-    <!-- ── HERO ─────────────────────────────────────────────── -->
-    <header class="hero">
-      <div class="hero-bg"></div>
-      <nav class="nav">
-        <div class="logo">
-          <span class="logo-icon">🔬</span>
-          <span class="logo-text">Safe Bite</span>
-        </div>
-        <div class="nav-buttons">
-          <a href="/compare" class="nav-link">⚖️ Compare Products</a>
-          <div class="nav-badge">India-focused · AI-powered</div>
-        </div>
-      </nav>
-      <div class="hero-content">
-        <div class="hero-tag">For Indian Snacks · Biscuits · Juices</div>
-        <h1 class="hero-title">
-          Know What's <em>Really</em><br />In Your Food
-        </h1>
-        <p class="hero-sub">
-          Paste ingredient labels. Get instant AI-powered safety scores,
-          allergen alerts, and healthier alternatives — all for Indian products.
-        </p>
-      </div>
-    </header>
 
-    <!-- ── MAIN FORM ─────────────────────────────────────────── -->
-    <main class="main-wrap">
-      <!-- Error Message Container -->
-      <div id="errorContainer" class="error-container hidden">
-        <div class="error-box">
-          <div class="error-header">
-            <span class="error-icon">⚠️</span>
-            <span class="error-title">Error</span>
-            <button class="error-close" onclick="closeError()">&times;</button>
-          </div>
-          <div class="error-message"></div>
-          <div class="error-suggestion"></div>
-        </div>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeBite — Indian Food Safety Analyzer</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
 
-      <section class="form-section card">
-        <div class="form-header">
-          <h2>Analyze Your Product</h2>
-      <p>Enter a product name - we'll fetch ingredients and analyze them with AI</p>
+<body>
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <nav class="nav">
+      <div class="logo">
+        <span class="logo-icon">🔬</span>
+        <span class="logo-text">Safe Bite</span>
+      </div>
+      <div class="nav-buttons">
+        <a href="/compare" class="nav-link">⚖️ Compare Products</a>
+
+        <style>
+          .btn-compare {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+          }
+
+          .btn-compare:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+          }
+
+          .btn-compare:active {
+            transform: scale(0.95);
+          }
+        </style>
+      </div>
+    </nav>
+    <div class="hero-content">
+      <div class="hero-tag">For Indian Snacks · Biscuits · Juices</div>
+      <h1 class="hero-title">
+        Know What's <em>Really</em><br />In Your Food
+      </h1>
+      <p class="hero-sub">
+        Paste ingredient labels. Get instant AI-powered safety scores,
+        allergen alerts, and healthier alternatives — all for Indian products.
+      </p>
+    </div>
+  </header>
+
+  <!-- ── MAIN FORM ─────────────────────────────────────────── -->
+  <main class="main-wrap">
+    <!-- Error Message Container -->
+    <div id="errorContainer" class="error-container hidden">
+      <div class="error-box">
+        <div class="error-header">
+          <span class="error-icon">⚠️</span>
+          <span class="error-title">Error</span>
+          <button class="error-close" onclick="closeError()">&times;</button>
+        </div>
+        <div class="error-message"></div>
+        <div class="error-suggestion"></div>
+      </div>
+    </div>
+
+    <section class="form-section card">
+      <div class="form-header">
+        <h2>Analyze Your Product</h2>
+        <p>Enter a product name - we'll fetch ingredients and analyze them with AI</p>
         <form id="analyzeForm">
           <div class="form-row">
             <div class="form-group">
-              <label for="productName"
-                >Product Name <span class="required">*</span></label
-              >
-              <input
-                type="text"
-                id="productName"
-                placeholder="e.g. Kurkure Masala Munch"
-                required
-              />
+              <label for="productName">Product Name <span class="required">*</span></label>
+              <input type="text" id="productName" placeholder="e.g. Kurkure Masala Munch" required />
             </div>
             <div class="form-group">
-              <label for="category"
-                >Category <span class="required">*</span></label
-              >
+              <label for="category">Category <span class="required">*</span></label>
               <select id="category" required>
                 <option value="">Select category</option>
                 <option value="snacks">🍟 Snacks</option>
@@ -91,74 +103,76 @@
             </button>
           </div>
         </form>
-      </section>
+    </section>
 
-      <!-- ── RESULTS ───────────────────────────────────────────── -->
-      <section id="results" class="results-section hidden">
-        <!-- Score Card -->
-        <div class="results-grid">
-          <div class="score-card card" id="scoreCard">
-            <div class="score-label">Health Rating</div>
-            <div class="score-number" id="scoreNumber">0.0</div>
-            <div class="score-max">out of 5.0</div>
-            <div class="score-stars" id="scoreStars"></div>
-            <div class="score-badge-el" id="scoreBadge"></div>    
-            <div class="score-product-name" id="scoreProductName"></div>
-          </div>
-
-          <!-- Risk Summary -->
-          <div class="risk-summary card">
-            <h3 class="card-title">Ingredient Breakdown</h3>
-            <div class="risk-pills" id="riskPills"></div>
-            <canvas id="riskChart" height="200"></canvas>
-          </div>
+    <!-- ── RESULTS ─────────────────────────────────────────────── -->
+    <section id="results" class="results-section hidden">
+      <!-- Score Card -->
+      <div class="results-grid">
+        <div class="score-card card" id="scoreCard">
+          <div class="score-label">Health Rating</div>
+          <div class="score-number" id="scoreNumber">0.0</div>
+          <div class="score-max">out of 5.0</div>
+          <div class="score-stars" id="scoreStars"></div>
+          <div class="score-badge-el" id="scoreBadge"></div>
+          <div class="score-product-name" id="scoreProductName"></div>
         </div>
 
-        <!-- Harmful Ingredients -->
-        <div class="card section-card" id="harmfulSection">
-          <h3 class="card-title">⚠️ Harmful Ingredients Detected</h3>
-          <div id="harmfulList" class="harmful-list"></div>
-        </div>
-
-        <!-- Allergens -->
-        <div class="card section-card" id="allergenSection">
-          <h3 class="card-title">🚨 Allergy Alert</h3>
-          <div id="allergenList" class="allergen-list"></div>
-        </div>
-
-        <!-- Full Ingredient Risk Bar -->
-        <div class="card section-card">
-          <h3 class="card-title">📊 Ingredient Risk Breakdown</h3>
-          <div id="ingredientBars" class="ingredient-bars"></div>
-        </div>
-
-        <!-- Alternatives -->
-        <div class="card section-card" id="alternativesSection">
-          <h3 class="card-title">💚 Healthier Alternatives</h3>
-          <div id="alternativesList" class="alternatives-list"></div>
-        </div>
-
-        <div class="model-note" id="modelNote"></div>
-      </section>
-
-      <!-- ── LOADING ───────────────────────────────────────────── -->
-      <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="loading-card">
-          <div class="spinner"></div>
-          <p>Fetching ingredients & analyzing with AI…</p>
+        <!-- Risk Summary -->
+        <div class="risk-summary card">
+          <h3 class="card-title">Ingredient Breakdown</h3>
+          <div class="risk-pills" id="riskPills"></div>
+          <canvas id="riskChart" height="200"></canvas>
         </div>
       </div>
-    </main>
 
-    <!-- ── FOOTER ────────────────────────────────────────────── -->
-    <footer class="footer">
-      <p>
-        IngredientIQ · AI-powered food safety for India · Snacks · Biscuits ·
-        Juices
-      </p>
-    </footer>
+      <!-- Harmful Ingredients -->
+      <div class="card section-card" id="harmfulSection">
+        <h3 class="card-title">⚠️ Harmful Ingredients Detected</h3>
+        <div id="harmfulList" class="harmful-list"></div>
+      </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script src="/static/js/app.js"></script>
-  </body>
+      <!-- Allergens -->
+      <div class="card section-card" id="allergenSection">
+        <h3 class="card-title">🚨 Allergy Alert</h3>
+        <div id="allergenList" class="allergen-list"></div>
+      </div>
+
+      <!-- Full Ingredient Risk Bar -->
+      <div class="card section-card">
+        <h3 class="card-title">📊 Ingredient Risk Breakdown</h3>
+        <div id="ingredientBars" class="ingredient-bars"></div>
+      </div>
+
+      <!-- Alternatives -->
+      <div class="card section-card" id="alternativesSection">
+        <h3 class="card-title">💚 Healthier Alternatives</h3>
+        <div id="alternativesList" class="alternatives-list"></div>
+      </div>
+
+      <div class="model-note" id="modelNote"></div>
+    </section>
+
+    <!-- ── LOADING ────────────────────────────────────────────── -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <p>Fetching ingredients & analyzing with AI…</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>
+      IngredientIQ · AI-powered food safety for India · Snacks · Biscuits ·
+      Juices
+    </p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/compare.js"></script>
+</body>
+
 </html>
