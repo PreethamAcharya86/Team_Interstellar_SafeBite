@@ -1,12 +1,12 @@
-# FoodAnalyzer
+# SafeBite
 
 ## Project Overview
 
-FoodAnalyzer is an intelligent food product analysis application that leverages artificial intelligence to assess ingredient safety and provide comprehensive health insights. The application integrates with the Open Food Facts database and uses the Groq API for advanced ingredient analysis and alternative product recommendations.
+SafeBite is an intelligent food product analysis application that leverages artificial intelligence to assess ingredient safety and provide comprehensive health insights. The application integrates with the Open Food Facts database and uses the Groq API for advanced ingredient analysis and alternative product recommendations.
 
 ## Description
 
-FoodAnalyzer is designed to help consumers make informed dietary choices by:
+SafeBite is designed to help consumers make informed dietary choices by:
 
 - Analyzing product ingredients for potential health risks
 - Detecting harmful additives, synthetic chemicals, and artificial preservatives
@@ -37,10 +37,10 @@ The application features a user-friendly web interface that accepts product name
 
 ### Setup Instructions
 
-1. Clone or navigate to the FoodAnalyzer project directory:
+1. Clone or navigate to the SafeBite project directory:
 
 ```bash
-cd FoodAnalyzer
+cd Team_Interstellar_SafeBite
 ```
 
 2. Create a Python virtual environment:
@@ -63,7 +63,7 @@ pip install -r requirements.txt
 
 4. Configure environment variables:
 
-Create a `.env` file in the main FoodAnalyzer folder (if not already present) with the following content:
+Create a `.env` file in the main SafeBite folder (if not already present) with the following content:
 
 ```
 GROQ_API_KEY=your_groq_api_key_here
@@ -79,7 +79,7 @@ To obtain a Groq API key:
 ## Project Structure
 
 ```
-FoodAnalyzer/
+Team_Interstellar_SafeBite/
 ├── backend/                    # Flask backend server
 │   ├── app.py                 # Main application entry point
 │   ├── analysis_engine.py     # Ingredient analysis logic
@@ -100,15 +100,9 @@ FoodAnalyzer/
 
 ### 1. Start the Backend Server
 
-From the main FoodAnalyzer directory:
+From the main Team_Interstellar_SafeBite directory:
 
 ```bash
-# Ensure virtual environment is activated
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
-
 # Navigate to backend directory and run the application
 cd backend
 python app.py
@@ -138,6 +132,7 @@ http://localhost:5000
 - Optionally provide ingredients directly
 - Click "Analyze" to get results
 - View detailed ingredient analysis, health score, and healthier alternatives
+- Compare two Food Products 
 
 ## Features
 
