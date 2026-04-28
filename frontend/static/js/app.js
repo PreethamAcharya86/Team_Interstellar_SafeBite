@@ -1,6 +1,6 @@
 /* IngredientIQ - Frontend App Logic */
 
-const API_BASE = ""; // relative, same origin as Flask
+const API_BASE = "http://localhost:5000"; // relative, same origin as Flask
 let riskChartInstance = null;
 
 // ── DOM ──────────────────────────────────────────────────────
