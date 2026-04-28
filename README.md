@@ -171,7 +171,3 @@ http://localhost:5000
 - If a product is not found in Open Food Facts, supports direct ingredient input
 - Manual ingredient analysis when API lookup fails
 - Ensures consistent functionality regardless of data availability
-
-# Activate virtual environment
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate     # Windows
