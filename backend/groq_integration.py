@@ -13,16 +13,46 @@ from groq import Groq
 # Use absolute path to ensure .env is found regardless of how module is imported
 env_path = Path(__file__).parent.parent / '.env'
 if env_path.exists():
+    print(f"📁 Loading .env from: {env_path}")
     load_dotenv(env_path, override=True)
 else:
-    print(f"Warning: .env file not found at {env_path}")
+    print(f"⚠️ Warning: .env file not found at {env_path}")
 
 # Initialize Groq client
 try:
-    client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        print("❌ Error: GROQ_API_KEY not found in environment variables")
+        print("   Please add GROQ_API_KEY to your .env file or system environment variables")
+        client = None
+    else:
+        print(f"✅ GROQ_API_KEY found (length: {len(api_key)} characters)")
+        # Remove proxy environment variables that might interfere
+        os.environ.pop('http_proxy', None)
+        os.environ.pop('https_proxy', None)
+        os.environ.pop('HTTP_PROXY', None)
+        os.environ.pop('HTTPS_PROXY', None)
+        
+        client = Groq(api_key=api_key)
+        print("✅ Groq client initialized successfully")
+except TypeError as e:
+    if "proxies" in str(e):
+        print(f"⚠️ Groq version compatibility issue. Trying alternative initialization...")
+        try:
+            # Try importing and checking version
+            import groq
+            print(f"   Groq version: {groq.__version__ if hasattr(groq, '__version__') else 'unknown'}")
+            print("   Try upgrading: pip install --upgrade groq")
+            client = None
+        except:
+            client = None
+    else:
+        print(f"❌ Error: Groq client initialization failed: {e}")
+        print(f"   Make sure GROQ_API_KEY is set in .env file")
+        client = None
 except Exception as e:
-    print(
-        f"Warning: Groq client initialization failed. Make sure GROQ_API_KEY is set in .env file: {e}")
+    print(f"❌ Error: Groq client initialization failed: {e}")
+    print(f"   Make sure GROQ_API_KEY is set in .env file")
     client = None
 
 
@@ -53,6 +83,7 @@ def get_ingredients_from_groq(product_name: str, category: str) -> dict:
     print("Sending request to Groq API...")
 
     try:
+        print(f"🔄 Calling Groq API for product: {product_name}")
         message = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             max_tokens=500,
@@ -79,21 +110,25 @@ If no product found even after searching similar names, use "found": false and p
         response_text = message.choices[0].message.content.strip()
 
         # Log the response for debugging
-        print(f"Groq API response: {response_text}")
+        print(f"✅ Groq API response received: {response_text[:100]}...")
 
         # Try to parse JSON response
         result = json.loads(response_text)
+        print(f"📊 Parsed result - Found: {result.get('found')}, Has ingredients: {bool(result.get('ingredients', '').strip())}")
 
         # Check if ingredients are actually found and not empty
         if result.get("found") and result.get("ingredients", "").strip():
+            print(f"✅ Successfully retrieved ingredients for: {result.get('product_name')}")
             return result
         else:
             # If Groq couldn't find it, still return the data but mark as fallback-needed
+            print(f"⚠️ Groq marked product as not found or no ingredients returned")
             result["fallback"] = True
+            result["groq_found"] = result.get("found")
             return result
 
     except json.JSONDecodeError as e:
-        print(f"JSON parse error: {e}")
+        print(f"❌ JSON parse error from Groq response: {e}")
         # Fallback if JSON parsing fails
         return {
             "product_name": product_name,
@@ -104,14 +139,32 @@ If no product found even after searching similar names, use "found": false and p
             "fallback": True
         }
     except Exception as e:
-        print(f"Groq API error: {e}")
+        error_msg = str(e)
+        print(f"❌ Groq API error: {error_msg}")
+        
+        # Check if it's an API key issue
+        if "API key" in error_msg or "401" in error_msg or "Unauthorized" in error_msg:
+            print("⚠️ API Key issue detected - check your GROQ_API_KEY in .env")
+            specific_error = "Invalid or expired Groq API key. Check your .env file."
+        # Check if it's rate limiting
+        elif "429" in error_msg or "rate" in error_msg.lower():
+            print("⚠️ Rate limit hit - too many requests to Groq")
+            specific_error = "Groq API rate limit exceeded. Please try again in a moment."
+        # Check if it's a network issue
+        elif "Connection" in error_msg or "timeout" in error_msg.lower():
+            print("⚠️ Network issue - check internet connection")
+            specific_error = "Network error connecting to Groq API. Check your internet connection."
+        else:
+            specific_error = f"Groq API error: {error_msg}"
+        
         return {
             "product_name": product_name,
             "ingredients": "",
             "brand": "Unknown",
             "found": False,
-            "error": str(e),
-            "fallback": True
+            "error": specific_error,
+            "fallback": True,
+            "api_error": True
         }
 
 

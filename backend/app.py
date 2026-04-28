@@ -3,6 +3,13 @@ Ingredient Analyzer - Flask Backend
 Analyzes Indian food product ingredients for safety, allergens, and health score
 """
 
+# Load environment variables FIRST before any imports that need them
+from pathlib import Path
+from dotenv import load_dotenv
+env_path = Path(__file__).parent.parent / '.env'
+if env_path.exists():
+    load_dotenv(env_path, override=True)
+
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import json
@@ -72,14 +79,25 @@ def analyze():
                 ingredients_source = "Open Food Facts (via Groq)"
                 print(f"✅ Found ingredients for: {actual_product_name}")
             else:
-                # Groq failed - return error asking for ingredients
+                # Groq failed - return detailed error asking for ingredients
                 print(f"⚠️  Groq could not find: {product_name}")
-                return jsonify({
-                    "error": f"Could not find '{product_name}' in Open Food Facts database.",
-                    "suggestion": "Please check your internet connection or provide ingredients manually.",
+                
+                error_response = {
                     "product_name": product_name,
-                    "needs_ingredients": True  # Signal frontend to ask for manual ingredients
-                }), 400
+                    "needs_ingredients": True,  # Signal frontend to ask for manual ingredients
+                    "groq_found": groq_result.get("groq_found", False),
+                    "api_error": groq_result.get("api_error", False)
+                }
+                
+                # Add specific error if Groq had an API error
+                if groq_result.get("api_error"):
+                    error_response["error"] = groq_result.get("error", "Groq API error")
+                    error_response["suggestion"] = "The Groq API encountered an issue. Please:\n1. Verify your GROQ_API_KEY is valid\n2. Check your internet connection\n3. Or provide ingredients manually to proceed"
+                else:
+                    error_response["error"] = f"Could not find '{product_name}' in Open Food Facts database"
+                    error_response["suggestion"] = "The product wasn't found in the database. Please provide ingredients manually to proceed"
+                
+                return jsonify(error_response), 400
 
         # Step 2: Analyze ingredients using ML model
         print(f"🔬 Analyzing ingredients for: {actual_product_name}")

@@ -94,10 +94,23 @@ form.addEventListener("submit", async (e) => {
 
     if (!response.ok) {
       const errorMsg = data.error || "Analysis failed";
-      const suggestion =
-        response.status === 500
-          ? "The server encountered an error. Please try again or check that the API key is properly configured."
-          : "Try another product name or check your internet connection.";
+      let suggestion = data.suggestion || "Please try again";
+
+      // Enhanced error handling for Groq API errors
+      if (data.api_error) {
+        suggestion +=
+          "\n\n🔧 Debug Info:\n" +
+          "• Check that GROQ_API_KEY is set in your .env file\n" +
+          "• Verify your internet connection\n" +
+          "• Try restarting the backend server";
+      }
+
+      // Show manual ingredient fallback option
+      if (data.needs_ingredients) {
+        suggestion +=
+          "\n\n💡 Alternative: You can provide the ingredients manually in the form above to proceed with analysis.";
+      }
+
       showError(errorMsg, suggestion);
       return;
     }

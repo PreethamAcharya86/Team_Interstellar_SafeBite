@@ -759,10 +759,12 @@ textarea:focus {
 .error-suggestion {
   color: #b71c1c;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid #ffcdd2;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .error-suggestion.hidden {
