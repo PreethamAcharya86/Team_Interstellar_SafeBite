@@ -74,37 +74,36 @@
 
     <section class="form-section card">
       <div class="form-header">
-        <h2>Analyze Your Product</h2>
+        <h2>🍔 Analyze Your Product</h2>
         <p>Enter a product name - we'll fetch ingredients and analyze them with AI</p>
         <form id="analyzeForm">
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group input-group-enhanced">
               <label for="productName">Product Name <span class="required">*</span></label>
-              <input type="text" id="productName" placeholder="e.g. Kurkure Masala Munch" required />
+              <div class="input-wrapper">
+                <span class="input-icon">🔍</span>
+                <input type="text" id="productName" placeholder="e.g., Kurkure Masala Munch, Pepsi, Bournvita..." class="input-enhanced" required />
+                <span class="input-cursor"></span>
+              </div>
             </div>
             <div class="form-group">
-  <label>Category <span class="required">*</span></label>
-
-  <div class="category-buttons" id="categoryButtons">
-    <button type="button" class="category-btn" data-value="snacks">
-      <img src="/static/images/snacks.jpg" alt="Snacks">
-      <span>Snacks</span>
-    </button>
-
-    <button type="button" class="category-btn" data-value="biscuits">
-      <img src="/static/images/biscuits.jpg" alt="Biscuits">
-      <span>Biscuits</span>
-    </button>
-
-    <button type="button" class="category-btn" data-value="juice">
-      <img src="/static/images/juice.jpg" alt="Juice">
-      <span>Juice</span>
-    </button>
-  </div>
-
-  <!-- Hidden input to keep backend same -->
-  <input type="hidden" id="category" required>
-</div>
+              <label>Category <span class="required">*</span></label>
+              <div class="category-buttons" id="categoryButtons">
+                <button type="button" class="category-btn" data-value="snacks">
+                  <img src="/static/images/snacks.jpg" alt="Snacks">
+                  <span>Snacks</span>
+                </button>
+                <button type="button" class="category-btn" data-value="biscuits">
+                  <img src="/static/images/biscuits.jpg" alt="Biscuits">
+                  <span>Biscuits</span>
+                </button>
+                <button type="button" class="category-btn" data-value="juice">
+                  <img src="/static/images/juice.jpg" alt="Juice">
+                  <span>Juice</span>
+                </button>
+              </div>
+              <input type="hidden" id="category" required>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -179,7 +178,7 @@
   <!-- ── FOOTER ────────────────────────────────────────────── -->
   <footer class="footer">
     <p>
-      IngredientIQ · AI-powered food safety for India · Snacks · Biscuits ·
+      SafetyBite · AI-powered food safety for India · Snacks · Biscuits ·
       Juices
     </p>
   </footer>

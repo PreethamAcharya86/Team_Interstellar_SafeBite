@@ -21,5 +21,8 @@
 ## 3.Third Iteration
 * Added comparision Section 
 
+## 4.Fourth Iteration
+* Added animations and hovering effect
+
 ## Run Command
 python backend/app.py
