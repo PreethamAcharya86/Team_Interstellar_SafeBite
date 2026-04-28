@@ -1,15 +1,4 @@
-# SafeBite
-
-## Project Overview
-
-* AI tool that analyzes product ingredients
-* Detects harmful additives and synthetic chemicals
-* Compares global banned ingredient lists
-* Provides a health risk score
-* Allergy alert system
-* Suggests healthier alternatives
-
-## First Iteration (MVP)
+## 1.First Iteration (MVP)
 
 ### Groq AI Integration
 
@@ -25,6 +14,9 @@
 
   * 65% rule-based
   * 35% machine learning
+
+## 2.Second Iteration
+* Added visuals and graphs with logics
 
 ## Run Command
 python backend/app.py
