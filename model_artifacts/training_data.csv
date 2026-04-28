@@ -1,0 +1,6 @@
+product_name,category,ingredients_clean,harmful_count,high_risk_count,medium_risk_count,low_risk_count,allergen_count,health_score,risk_label
+Chips,snacks,"potato, salt, msg",1,0,0,1,0,4.5,safe
+Sweet Drink,juice,"water, sugar, aspartame",1,1,0,0,0,3.0,moderate
+Color Candy,snacks,"sugar, tartrazine, sunset yellow",2,0,2,0,0,3.0,moderate
+Healthy Juice,juice,"fruit pulp, water",0,0,0,0,0,5.0,safe
+Biscuits,biscuits,"wheat, sugar, milk",0,0,0,0,2,5.0,safe

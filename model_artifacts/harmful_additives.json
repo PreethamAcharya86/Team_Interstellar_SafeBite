@@ -1,0 +1,30 @@
+{
+  "sodium benzoate": {
+    "risk": "medium",
+    "reason": "Preservative"
+  },
+  "msg": {
+    "risk": "low",
+    "reason": "Flavor enhancer"
+  },
+  "aspartame": {
+    "risk": "high",
+    "reason": "Artificial sweetener"
+  },
+  "acesulfame": {
+    "risk": "high",
+    "reason": "Artificial sweetener"
+  },
+  "tartrazine": {
+    "risk": "medium",
+    "reason": "Artificial color"
+  },
+  "sunset yellow": {
+    "risk": "medium",
+    "reason": "Artificial color"
+  },
+  "brilliant blue": {
+    "risk": "medium",
+    "reason": "Artificial color"
+  }
+}

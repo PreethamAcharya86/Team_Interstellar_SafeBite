@@ -1,0 +1,15 @@
+{
+  "milk": [
+    "milk",
+    "lactose"
+  ],
+  "gluten": [
+    "wheat",
+    "gluten"
+  ],
+  "nuts": [
+    "almond",
+    "cashew",
+    "peanut"
+  ]
+}
