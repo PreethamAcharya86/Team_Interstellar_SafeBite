@@ -18,5 +18,8 @@
 ## 2.Second Iteration
 * Added visuals and graphs with logics
 
+## 3.Third Iteration
+* Added comparision Section 
+
 ## Run Command
 python backend/app.py
