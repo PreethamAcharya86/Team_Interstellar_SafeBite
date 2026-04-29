@@ -261,11 +261,90 @@ function renderResults(data) {
   document.getElementById("modelNote").textContent =
     `Ingredients: ${ingredientsSource} | Alternatives: ${alternativesSource} | Analysis: ${data.model_used || "Rule-based engine"}`;
 
+  // Fetch and display long-term disease risks
+  fetchAndDisplayDiseases(data);
+
   // Scroll to results
   setTimeout(() => {
     resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 100);
 }
+
+// ── Disease Analysis ──────────────────────────────────────────
+async function fetchAndDisplayDiseases(analysisData) {
+  try {
+    const response = await fetch(`${API_BASE}/api/analyze-diseases`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        product_name: analysisData.product_name,
+        ingredients: analysisData.ingredient_risks?.map(i => i.name).join(", ") || "",
+        health_score: analysisData.health_score,
+        harmful_ingredients: analysisData.harmful_ingredients || []
+      }),
+    });
+
+    const diseaseData = await response.json();
+
+    if (!response.ok) {
+      console.error("Disease analysis error:", diseaseData);
+      return;
+    }
+
+    displayDiseaseResults(diseaseData);
+  } catch (err) {
+    console.error("Error fetching disease analysis:", err);
+  }
+}
+
+function displayDiseaseResults(data) {
+  const diseaseSection = document.getElementById("diseaseSection");
+  const diseaseMessage = document.getElementById("diseaseMessage");
+  const diseaseList = document.getElementById("diseaseList");
+
+  diseaseSection.classList.remove("hidden");
+
+  // Display diseases if any exist
+  if (data.diseases && data.diseases.length > 0) {
+    // Show warning message
+    diseaseMessage.innerHTML = `
+      <div class="disease-warning ${data.disease_status}">
+        ${data.warning_message}
+      </div>
+    `;
+
+    const riskIcons = {
+      high: "🔴",
+      medium: "🟡",
+      low: "🟢"
+    };
+
+    diseaseList.innerHTML = data.diseases
+      .map(
+        (disease) => `
+      <div class="disease-card ${disease.risk_level}">
+        <div class="disease-icon">${riskIcons[disease.risk_level] || "⚠️"}</div>
+        <div class="disease-content">
+          <div class="disease-name">${disease.disease}</div>
+          <div class="disease-risk">Risk Level: <strong>${disease.risk_level.toUpperCase()}</strong></div>
+          <div class="disease-description">${disease.description}</div>
+          <div class="disease-frequency">Found in ${disease.ingredient_count} harmful ingredient(s)</div>
+        </div>
+      </div>
+    `,
+      )
+      .join("");
+  } else {
+    // No diseases found - show only the positive message, no warning
+    diseaseMessage.innerHTML = `
+      <div class="disease-warning ${data.disease_status}">
+        ${data.warning_message}
+      </div>
+    `;
+    diseaseList.innerHTML = "";
+  }
+}
+
 
 const buttons = document.querySelectorAll(".category-btn");
 const hiddenInput = document.getElementById("category");
