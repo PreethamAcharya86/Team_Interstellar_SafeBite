@@ -507,3 +507,106 @@ class IngredientAnalyzer:
             x["risk_level"], 3), -x["ingredient_count"]))
 
         return disease_list
+
+    def get_product_insights(self, product_name, health_score, harmful_ingredients, ingredients_text, category):
+        """
+        Generate product-specific insights about what's in the product and potential health effects
+        Returns structured insights about the product's composition and risks
+        """
+        clean = self.clean_ingredients(ingredients_text)
+        insights = {
+            "product_name": product_name,
+            "health_score": health_score,
+            "main_concerns": [],
+            "risk_summary": "",
+            "recommendation": "",
+            "key_issues": []
+        }
+
+        # Analyze what's in the product
+        high_risk_ingredients = [h for h in harmful_ingredients if h["risk"] == "high"]
+        medium_risk_ingredients = [h for h in harmful_ingredients if h["risk"] == "medium"]
+
+        # Check for specific patterns
+        has_trans_fat = any(ing in clean for ing in ["hydrogenated", "vanaspati", "dalda", "trans fat"])
+        has_high_sugar = any(ing in clean for ing in ["sugar", "corn syrup", "high fructose"])
+        has_msg = any(ing in clean for ing in ["monosodium glutamate", "msg"])
+        has_artificial_colors = any(ing in clean for ing in ["artificial color", "e102", "e110", "e122", "e124", "e129", "red 40", "yellow 5", "yellow 6"])
+        has_preservatives = any(ing in clean for ing in ["benzoate", "sorbate", "nitrite", "e211", "e220"])
+        has_refined_flour = any(ing in clean for ing in ["maida", "refined wheat flour"])
+
+        # Generate main concerns
+        if has_trans_fat:
+            insights["main_concerns"].append({
+                "concern": "⚠️ HIGH: Contains Trans Fats",
+                "impact": "Trans fats significantly increase cardiovascular disease risk and raise bad cholesterol",
+                "found_in": [h["name"] for h in high_risk_ingredients if "hydrogenated" in h["key"].lower() or "trans" in h["key"].lower()]
+            })
+            
+        if has_high_sugar and category == "juice":
+            insights["main_concerns"].append({
+                "concern": "⚠️ HIGH: Contains High Sugar",
+                "impact": "High sugar content increases risk of Type 2 Diabetes, obesity, and metabolic syndrome",
+                "found_in": ["Sugar", "Corn Syrup"]
+            })
+
+        if has_msg:
+            insights["main_concerns"].append({
+                "concern": "🟡 MEDIUM: Contains MSG (Monosodium Glutamate)",
+                "impact": "May cause migraines, headaches, and allergic reactions in sensitive individuals",
+                "found_in": ["Monosodium Glutamate (MSG)"]
+            })
+
+        if has_artificial_colors:
+            insights["main_concerns"].append({
+                "concern": "🟡 MEDIUM: Contains Artificial Colors",
+                "impact": "Linked to hyperactivity in children and allergic reactions",
+                "found_in": [h["name"] for h in harmful_ingredients if h["risk"] == "medium" and "color" in h["name"].lower()]
+            })
+
+        if has_preservatives:
+            insights["main_concerns"].append({
+                "concern": "🟡 MEDIUM: Contains Synthetic Preservatives",
+                "impact": "May cause asthma, allergic reactions, or other health issues",
+                "found_in": [h["name"] for h in harmful_ingredients if "preserv" in h["name"].lower() or "benzoate" in h["key"].lower()]
+            })
+
+        # Summary based on health score
+        if health_score >= 4.0:
+            insights["risk_summary"] = "✅ This product has a healthy composition with minimal harmful ingredients."
+        elif health_score >= 3.0:
+            insights["risk_summary"] = "🟡 This product is moderately safe but contains some additives. Occasional consumption is okay, but not recommended as a regular staple."
+        elif health_score >= 2.0:
+            insights["risk_summary"] = "🔴 This product contains concerning levels of harmful ingredients and should be avoided or consumed very rarely."
+        else:
+            insights["risk_summary"] = "🚫 This product is unsafe for regular consumption due to high levels of harmful additives and unhealthy components."
+
+        # Specific recommendations
+        if health_score >= 4.0:
+            insights["recommendation"] = "This product is safe for regular consumption. Keep enjoying it, but maintain a balanced diet."
+        elif has_trans_fat:
+            insights["recommendation"] = "❌ AVOID: This product contains dangerous trans fats. Look for healthier alternatives with vegetable oil instead of hydrogenated oils."
+        elif has_high_sugar and health_score < 3.0:
+            insights["recommendation"] = "⚠️ LIMIT: This product has high sugar content. Consume sparingly and prefer natural juice or water alternatives."
+        elif len(high_risk_ingredients) > 0:
+            insights["recommendation"] = f"⚠️ CAUTION: This product contains {len(high_risk_ingredients)} high-risk ingredient(s). Consider healthier alternatives or consume occasionally."
+        else:
+            insights["recommendation"] = "🤔 Consider healthier options with fewer artificial additives for optimal health."
+
+        # Key issues summary
+        if has_trans_fat:
+            insights["key_issues"].append("Contains dangerous trans fats")
+        if has_high_sugar:
+            insights["key_issues"].append("High sugar content")
+        if has_msg:
+            insights["key_issues"].append("Contains MSG")
+        if has_artificial_colors:
+            insights["key_issues"].append("Contains artificial colors/dyes")
+        if has_preservatives:
+            insights["key_issues"].append("Contains chemical preservatives")
+        if has_refined_flour:
+            insights["key_issues"].append("Made with refined flour")
+        if len(high_risk_ingredients) > 0:
+            insights["key_issues"].append(f"{len(high_risk_ingredients)} high-risk ingredient(s)")
+
+        return insights

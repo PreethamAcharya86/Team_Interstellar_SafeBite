@@ -374,5 +374,35 @@ def analyze_diseases():
         return jsonify({"error": f"Disease analysis failed: {str(e)}"}), 500
 
 
+@app.route("/api/analyze-product-insights", methods=["POST"])
+def analyze_product_insights():
+    """
+    Generate product-specific insights about composition and health effects
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    product_name = data.get("product_name", "Unknown Product")
+    health_score = data.get("health_score", 3.0)
+    harmful_ingredients = data.get("harmful_ingredients", [])
+    ingredients_text = data.get("ingredients", "").strip()
+    category = data.get("category", "snacks")
+
+    if not ingredients_text:
+        return jsonify({"error": "Ingredients text is required"}), 400
+
+    try:
+        # Get product insights
+        insights = analyzer.get_product_insights(
+            product_name, health_score, harmful_ingredients, ingredients_text, category)
+
+        return jsonify(insights)
+
+    except Exception as e:
+        print(f"❌ Error during product insights analysis: {e}")
+        return jsonify({"error": f"Product insights analysis failed: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
