@@ -26,3 +26,6 @@
 
 ## 5.Fifth iteration
 * Added disease prediction for long term consumption of food
+
+## 6.Final iteration 
+* Corrected the Bugs and added extra features 

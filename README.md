@@ -43,38 +43,12 @@ The application features a user-friendly web interface that accepts product name
 cd Team_Interstellar_SafeBite
 ```
 
-2. Create a Python virtual environment:
-
-```bash
-# On Windows
-python -m venv venv
-venv\Scripts\activate
-
-# On macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3. Install required dependencies:
+2. Install required dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configure environment variables:
-
-Create a `.env` file in the main SafeBite folder (if not already present) with the following content:
-
-```
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-To obtain a Groq API key:
-
-- Visit https://console.groq.com
-- Sign up for a free account
-- Generate an API key from the dashboard
-- Copy the API key and paste it in the `.env` file
 
 ## Project Structure
 
@@ -161,8 +135,8 @@ http://localhost:5000
 - Includes budget-friendly options
 - All suggestions are for real products available in Indian markets
 
-### Fallback System
-
-- If a product is not found in Open Food Facts, supports direct ingredient input
-- Manual ingredient analysis when API lookup fails
-- Ensures consistent functionality regardless of data availability
+###  Product Comparison
+- Compares two food products side-by-side
+- Highlights differences in sugar, fat, sodium, and additives
+- Shows which product is healthier overall
+- Gives a quick “Better Choice” recommendation
