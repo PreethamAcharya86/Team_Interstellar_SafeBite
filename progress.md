@@ -24,5 +24,5 @@
 ## 4.Fourth Iteration
 * Added animations and hovering effect
 
-## Run Command
-python backend/app.py
+## 5.Fifth iteration
+* Added disease prediction for long term consumption of food
