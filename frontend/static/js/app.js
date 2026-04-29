@@ -264,6 +264,9 @@ function renderResults(data) {
   // Fetch and display long-term disease risks
   fetchAndDisplayDiseases(data);
 
+  // Fetch and display product insights
+  fetchAndDisplayProductInsights(data);
+
   // Scroll to results
   setTimeout(() => {
     resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -278,9 +281,10 @@ async function fetchAndDisplayDiseases(analysisData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         product_name: analysisData.product_name,
-        ingredients: analysisData.ingredient_risks?.map(i => i.name).join(", ") || "",
+        ingredients:
+          analysisData.ingredient_risks?.map((i) => i.name).join(", ") || "",
         health_score: analysisData.health_score,
-        harmful_ingredients: analysisData.harmful_ingredients || []
+        harmful_ingredients: analysisData.harmful_ingredients || [],
       }),
     });
 
@@ -316,7 +320,7 @@ function displayDiseaseResults(data) {
     const riskIcons = {
       high: "🔴",
       medium: "🟡",
-      low: "🟢"
+      low: "🟢",
     };
 
     diseaseList.innerHTML = data.diseases
@@ -345,14 +349,110 @@ function displayDiseaseResults(data) {
   }
 }
 
+// ── Product Insights Analysis ──────────────────────────────────
+async function fetchAndDisplayProductInsights(analysisData) {
+  try {
+    const response = await fetch(`${API_BASE}/api/analyze-product-insights`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        product_name: analysisData.product_name,
+        health_score: analysisData.health_score,
+        harmful_ingredients: analysisData.harmful_ingredients || [],
+        ingredients:
+          analysisData.ingredient_risks?.map((i) => i.name).join(", ") || "",
+        category: analysisData.category,
+      }),
+    });
+
+    const insightsData = await response.json();
+
+    if (!response.ok) {
+      console.error("Product insights error:", insightsData);
+      return;
+    }
+
+    displayProductInsights(insightsData);
+  } catch (err) {
+    console.error("Error fetching product insights:", err);
+  }
+}
+
+function displayProductInsights(data) {
+  const insightsSection = document.getElementById("productInsightsSection");
+  const insightText = document.getElementById("productInsightText");
+  const riskFactors = document.getElementById("productRiskFactors");
+  const diseasesAssociated = document.getElementById(
+    "productDiseasesAssociated",
+  );
+  const recommendationBox = document.getElementById("productRecommendation");
+
+  // Show the section
+  insightsSection.style.display = "block";
+
+  // Display main insight text
+  insightText.textContent = data.risk_summary;
+
+  // Display main concerns
+  if (data.main_concerns && data.main_concerns.length > 0) {
+    riskFactors.innerHTML = `
+      <div style="margin-top: 15px;">
+        <h4 style="margin-bottom: 10px; color: #333;">Main Health Concerns:</h4>
+        ${data.main_concerns
+          .map(
+            (concern) => `
+          <div style="background-color: #fff3cd; border-left: 4px solid #ff6b6b; padding: 12px; margin-bottom: 10px; border-radius: 4px;">
+            <div style="font-weight: bold; color: #d32f2f; margin-bottom: 5px;">${concern.concern}</div>
+            <div style="color: #555; font-size: 14px; line-height: 1.5;">${concern.impact}</div>
+            ${concern.found_in && concern.found_in.length > 0 ? `<div style="color: #666; font-size: 12px; margin-top: 5px;">Found in: ${concern.found_in.join(", ")}</div>` : ""}
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+  } else {
+    riskFactors.innerHTML = "";
+  }
+
+  // Display key issues
+  if (data.key_issues && data.key_issues.length > 0) {
+    diseasesAssociated.innerHTML = `
+      <div style="margin-top: 15px;">
+        <h4 style="margin-bottom: 10px; color: #333;">Key Issues:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          ${data.key_issues
+            .map(
+              (issue) => `
+            <span style="background-color: #e74c3c; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">
+              ${issue}
+            </span>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+  } else {
+    diseasesAssociated.innerHTML = "";
+  }
+
+  // Display recommendation
+  recommendationBox.innerHTML = `
+    <div style="background-color: #ecf0f1; border-left: 4px solid #3498db; padding: 15px; margin-top: 15px; border-radius: 4px;">
+      <h4 style="margin-top: 0; margin-bottom: 10px; color: #2c3e50;">📋 Recommendation:</h4>
+      <div style="color: #34495e; font-size: 14px; line-height: 1.6; font-weight: 500;">${data.recommendation}</div>
+    </div>
+  `;
+}
 
 const buttons = document.querySelectorAll(".category-btn");
 const hiddenInput = document.getElementById("category");
 
-buttons.forEach(btn => {
+buttons.forEach((btn) => {
   btn.addEventListener("click", () => {
     // remove active from all
-    buttons.forEach(b => b.classList.remove("active"));
+    buttons.forEach((b) => b.classList.remove("active"));
 
     // add active to clicked
     btn.classList.add("active");
