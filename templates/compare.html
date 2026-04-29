@@ -1,200 +1,178 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Compare Products — SafeBite</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/static/css/style.css" />
-  </head>
-  <body>
-    <!-- ── HERO ─────────────────────────────────────────────── -->
-    <header class="hero">
-      <div class="hero-bg"></div>
-      <nav class="nav">
-        <div class="logo">
-          <p class="logo-text">Safe <span>Bite</span></p>
-        </div>
-      </nav>
-      <div class="hero-content">
-        <div class="hero-tag">Side-by-side Product Analysis</div>
-        <h1 class="hero-title">
-          Compare Two <em>Products</em><br />And Choose Wisely
-        </h1>
-        <p class="hero-sub">
-          Analyze two food products side-by-side to see which one is healthier.
-          Compare ingredient safety, allergens, and harmful additives instantly.
-        </p>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Products — SafeBite</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <nav class="nav">
+      <div class="logo">
+        <p class="logo-text">Safe <span>Bite</span></p>
       </div>
-    </header>
-
-    <!-- ── MAIN FORM ─────────────────────────────────────────── -->
-    <main class="main-wrap">
-      <!-- Error Message Container -->
-      <div id="errorContainer" class="error-container hidden">
-        <div class="error-box">
-          <div class="error-header">
-            <span class="error-icon">⚠️</span>
-            <span class="error-title">Error</span>
-            <button class="error-close" onclick="closeError()">&times;</button>
-          </div>
-          <div class="error-message"></div>
-          <div class="error-suggestion"></div>
-        </div>
-      </div>
-
-      <section class="form-section card">
-        <div class="form-header">
-          <h2>Compare Two Products</h2>
-          <p>Enter two product names and we'll analyze & compare them</p>
-        </div>
-        <form id="compareForm">
-          <div class="compare-form-row">
-            <!-- Product 1 -->
-            <div class="product-column">
-              <h3 class="column-title">Product 1️⃣</h3>
-              <div class="form-group">
-                <label for="product1Name"
-                  >Product Name <span class="required">*</span></label
-                >
-                <input
-                  type="text"
-                  id="product1Name"
-                  placeholder="e.g. Kurkure Masala Munch"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="category1"
-                  >Category <span class="required">*</span></label
-                >
-                <select id="category1" required>
-                  <option value="">Select category</option>
-                  <option value="snacks">🍟 Snacks</option>
-                  <option value="biscuits">🍪 Biscuits</option>
-                  <option value="juice">🥤 Juice</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Divider -->
-            <div class="divider-col">VS</div>
-
-            <!-- Product 2 -->
-            <div class="product-column">
-              <h3 class="column-title">Product 2️⃣</h3>
-              <div class="form-group">
-                <label for="product2Name"
-                  >Product Name <span class="required">*</span></label
-                >
-                <input
-                  type="text"
-                  id="product2Name"
-                  placeholder="e.g. Britannia NutriChoice"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="category2"
-                  >Category <span class="required">*</span></label
-                >
-                <select id="category2" required>
-                  <option value="">Select category</option>
-                  <option value="snacks">🍟 Snacks</option>
-                  <option value="biscuits">🍪 Biscuits</option>
-                  <option value="juice">🥤 Juice</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn-analyze" id="compareBtn">
-              <span class="btn-icon">⚖️</span>
-              <span>Compare Products</span>
-            </button>
-            <button type="button" class="btn-demo" id="compareDemoBtn">
-              Try Sample Comparison
-            </button>
-            <a href="/" class="btn-back">← Back to Analyzer</a>
-          </div>
-        </form>
-      </section>
-
-      <!-- ── RESULTS ───────────────────────────────────────────── -->
-      <section id="comparisonResults" class="comparison-results hidden">
-        <!-- Winner Badge -->
-        <div class="winner-section" id="winnerSection"></div>
-
-        <!-- Score Comparison -->
-        <div class="comparison-grid">
-          <div class="comparison-card card" id="product1Card"></div>
-          <div class="comparison-card card" id="product2Card"></div>
-        </div>
-
-        <!-- Risk Breakdown Comparison -->
-        <div class="card section-card">
-          <h3 class="card-title">📊 Risk Breakdown Comparison</h3>
-          <div class="risk-comparison" id="riskComparison"></div>
-        </div>
-
-        <!-- Harmful Ingredients Comparison -->
-        <div class="card section-card">
-          <h3 class="card-title">⚠️ Harmful Ingredients Comparison</h3>
-          <div class="harmful-comparison" id="harmfulComparison"></div>
-        </div>
-
-        <!-- Allergen Comparison -->
-        <div class="card section-card">
-          <h3 class="card-title">🚨 Allergen Comparison</h3>
-          <div class="allergen-comparison" id="allergenComparison"></div>
-        </div>
-
-        <!-- Detailed Score Comparison Table -->
-        <div class="card section-card">
-          <h3 class="card-title">📈 Detailed Score Breakdown</h3>
-          <div class="score-table-wrapper">
-            <table class="score-comparison-table">
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th id="table-product1"></th>
-                  <th id="table-product2"></th>
-                  <th>Winner</th>
-                </tr>
-              </thead>
-              <tbody id="scoreTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Recommendations -->
-        <div class="card section-card">
-          <h3 class="card-title">💡 Recommendation</h3>
-          <div id="recommendationText" class="recommendation-box"></div>
-        </div>
-      </section>
-
-      <!-- ── LOADING ───────────────────────────────────────────── -->
-      <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="loading-card">
-          <div class="spinner"></div>
-          <p>Analyzing & comparing both products…</p>
-        </div>
-      </div>
-    </main>
-
-    <!-- ── FOOTER ────────────────────────────────────────────── -->
-    <footer class="footer">
-      <p>
-        SafeBite · AI-powered food safety for India · Compare & Choose Wisely
+    </nav>
+    <div class="hero-content">
+      <div class="hero-tag">Side-by-side Product Analysis</div>
+      <h1 class="hero-title">
+        Compare Two <em>Products</em><br />And Choose Wisely
+      </h1>
+      <p class="hero-sub">
+        Analyze two food products side-by-side to see which one is healthier.
+        Compare ingredient safety, allergens, and harmful additives instantly.
       </p>
-    </footer>
+    </div>
+  </header>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script src="/static/js/compare.js"></script>
-  </body>
+  <!-- ── MAIN FORM ─────────────────────────────────────────── -->
+  <main class="main-wrap">
+    <!-- Error Message Container -->
+    <div id="errorContainer" class="error-container hidden">
+      <div class="error-box">
+        <div class="error-header">
+          <span class="error-icon">⚠️</span>
+          <span class="error-title">Error</span>
+          <button class="error-close" onclick="closeError()">&times;</button>
+        </div>
+        <div class="error-message"></div>
+        <div class="error-suggestion"></div>
+      </div>
+    </div>
+
+    <section class="form-section card">
+      <div class="form-header">
+        <h2>Compare Two Products</h2>
+        <p>Enter two product names and we'll analyze & compare them</p>
+      </div>
+      <form id="compareForm">
+        <div class="compare-form-row">
+          <!-- Product 1 -->
+          <div class="product-column">
+            <h3 class="column-title">Product 1️⃣</h3>
+            <div class="form-group">
+              <label for="product1Name">Product Name <span class="required">*</span></label>
+              <input type="text" id="product1Name" placeholder="e.g. Kurkure Masala Munch" required />
+            </div>
+            <div class="form-group">
+              <label for="category1">Category <span class="required">*</span></label>
+              <select id="category1" required>
+                <option value="">Select category</option>
+                <option value="snacks">🍟 Snacks</option>
+                <option value="biscuits">🍪 Biscuits</option>
+                <option value="juice">🥤 Juice</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="divider-col">VS</div>
+
+          <!-- Product 2 -->
+          <div class="product-column">
+            <h3 class="column-title">Product 2️⃣</h3>
+            <div class="form-group">
+              <label for="product2Name">Product Name <span class="required">*</span></label>
+              <input type="text" id="product2Name" placeholder="e.g. Britannia NutriChoice" required />
+            </div>
+            <div class="form-group">
+              <label for="category2">Category <span class="required">*</span></label>
+              <select id="category2" required>
+                <option value="">Select category</option>
+                <option value="snacks">🍟 Snacks</option>
+                <option value="biscuits">🍪 Biscuits</option>
+                <option value="juice">🥤 Juice</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-analyze" id="compareBtn">
+            <span class="btn-icon">⚖️</span>
+            <span>Compare Products</span>
+          </button>
+          <button type="button" class="btn-demo" id="compareDemoBtn">
+            Try Sample Comparison
+          </button>
+          <a href="/" class="btn-back">← Back to Analyzer</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- ── RESULTS ───────────────────────────────────────────── -->
+    <section id="comparisonResults" class="comparison-results hidden">
+      <!-- Winner Badge -->
+      <div class="winner-section" id="winnerSection"></div>
+
+      <!-- Score Comparison -->
+      <div class="comparison-grid">
+        <div class="comparison-card card" id="product1Card"></div>
+        <div class="comparison-card card" id="product2Card"></div>
+      </div>
+
+      <!-- Harmful Ingredients Comparison -->
+      <div class="card section-card">
+        <h3 class="card-title">⚠️ Harmful Ingredients Comparison</h3>
+        <div class="harmful-comparison" id="harmfulComparison"></div>
+      </div>
+
+      <!-- Allergen Comparison -->
+      <div class="card section-card">
+        <h3 class="card-title">🚨 Allergen Comparison</h3>
+        <div class="allergen-comparison" id="allergenComparison"></div>
+      </div>
+
+      <!-- Detailed Score Comparison Table -->
+      <div class="card section-card">
+        <h3 class="card-title">📈 Detailed Score Breakdown</h3>
+        <div class="score-table-wrapper">
+          <table class="score-comparison-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th id="table-product1"></th>
+                <th id="table-product2"></th>
+                <th>Winner</th>
+              </tr>
+            </thead>
+            <tbody id="scoreTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card section-card">
+        <h3 class="card-title">💡 Recommendation</h3>
+        <div id="recommendationText" class="recommendation-box"></div>
+      </div>
+    </section>
+
+    <!-- ── LOADING ───────────────────────────────────────────── -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <p>Analyzing & comparing both products…</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>
+      SafeBite · AI-powered food safety for India · Compare & Choose Wisely
+    </p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="/static/js/compare.js"></script>
+</body>
+
 </html>

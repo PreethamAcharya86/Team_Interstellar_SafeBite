@@ -185,9 +185,6 @@ function renderComparison(data) {
   // Render score cards
   renderScoreCards(product1, product2);
 
-  // Render risk breakdown comparison
-  renderRiskComparison(product1, product2);
-
   // Render harmful ingredients comparison
   renderHarmfulComparison(product1, product2);
 
@@ -264,66 +261,6 @@ function renderScoreCard(product) {
         <div class="pill high">🔴 ${rc.high || 0}</div>
       </div>
       <div class="harmful-count">🚨 Harmful: ${product.harmful_count || 0}</div>
-    </div>
-  `;
-}
-
-// Render risk breakdown comparison
-function renderRiskComparison(product1, product2) {
-  const riskComparison = document.getElementById("riskComparison");
-  const rc1 = product1.risk_counts || {};
-  const rc2 = product2.risk_counts || {};
-
-  const safe1 = (rc1.safe || 0) + (rc1.low || 0);
-  const safe2 = (rc2.safe || 0) + (rc2.low || 0);
-  const med1 = rc1.medium || 0;
-  const med2 = rc2.medium || 0;
-  const high1 = rc1.high || 0;
-  const high2 = rc2.high || 0;
-
-  riskComparison.innerHTML = `
-    <div class="risk-comparison-table">
-      <div class="risk-row">
-        <div class="risk-label">Safe / Low Risk</div>
-        <div class="risk-bar-col">
-          <div class="risk-label-prod">${product1.product_name}</div>
-          <div class="risk-bar-compare safe" style="width: ${(safe1 / Math.max(safe1, safe2, 1)) * 100}%">
-            ${safe1}
-          </div>
-        </div>
-        <div class="risk-bar-col">
-          <div class="risk-label-prod">${product2.product_name}</div>
-          <div class="risk-bar-compare safe" style="width: ${(safe2 / Math.max(safe1, safe2, 1)) * 100}%">
-            ${safe2}
-          </div>
-        </div>
-      </div>
-      <div class="risk-row">
-        <div class="risk-label">Medium Risk</div>
-        <div class="risk-bar-col">
-          <div class="risk-bar-compare medium" style="width: ${(med1 / Math.max(med1, med2, 1)) * 100}%">
-            ${med1}
-          </div>
-        </div>
-        <div class="risk-bar-col">
-          <div class="risk-bar-compare medium" style="width: ${(med2 / Math.max(med1, med2, 1)) * 100}%">
-            ${med2}
-          </div>
-        </div>
-      </div>
-      <div class="risk-row">
-        <div class="risk-label">High Risk</div>
-        <div class="risk-bar-col">
-          <div class="risk-bar-compare high" style="width: ${(high1 / Math.max(high1, high2, 1)) * 100}%">
-            ${high1}
-          </div>
-        </div>
-        <div class="risk-bar-col">
-          <div class="risk-bar-compare high" style="width: ${(high2 / Math.max(high1, high2, 1)) * 100}%">
-            ${high2}
-          </div>
-        </div>
-      </div>
     </div>
   `;
 }
