@@ -94,8 +94,11 @@ body {
 }
 .logo-text {
   font-family: var(--font-head);
-  font-size: 22px;
+  font-size: 35px;
   color: #fff;
+}
+.logo-text span {
+  color: rgb(229, 169, 56);
 }
 
 .nav-badge {
