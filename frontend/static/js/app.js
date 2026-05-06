@@ -1,7 +1,29 @@
-/* IngredientIQ - Frontend App Logic */
-
-const API_BASE = "http://localhost:5000"; // relative, same origin as Flask
+// ── Configuration ──────────────────────────────────────────
+const API_BASE = ""; // Relative paths for same-origin requests
 let riskChartInstance = null;
+
+// ── Hero Mouse Tracking ───────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  const hero = document.querySelector(".hero");
+  if (hero) {
+    hero.addEventListener("mousemove", (e) => {
+      const { clientX, clientY } = e;
+      const { left, top, width, height } = hero.getBoundingClientRect();
+      
+      const x = ((clientX - left) / width) * 100;
+      const y = ((clientY - top) / height) * 100;
+      
+      hero.style.setProperty("--mouse-x", `${x}%`);
+      hero.style.setProperty("--mouse-y", `${y}%`);
+      
+      // Subtly shift dots in opposite direction
+      const dx = (x - 50) * 0.2;
+      const dy = (y - 50) * 0.2;
+      hero.style.setProperty("--dot-x", `${-dx}px`);
+      hero.style.setProperty("--dot-y", `${-dy}px`);
+    });
+  }
+});
 
 // ── DOM ──────────────────────────────────────────────────────
 const form = document.getElementById("analyzeForm");
@@ -130,7 +152,15 @@ form.addEventListener("submit", async (e) => {
 
 // ── Render Results ───────────────────────────────────────────
 function renderResults(data) {
-  resultsSection.classList.remove("hidden");
+  const results = document.getElementById("results");
+  results.classList.remove("hidden");
+  
+  // Add staggered animation
+  const sections = results.children;
+  Array.from(sections).forEach((section, index) => {
+    section.classList.add("animate-fade-in");
+    section.style.animationDelay = `${index * 0.1}s`;
+  });
 
   // Score card
   const scoreNum = document.getElementById("scoreNumber");
@@ -145,7 +175,8 @@ function renderResults(data) {
   scoreBadge.className = "score-badge-el " + getColorClass(data.health_score);
 
   scoreStars.textContent = getStars(data.health_score);
-  scoreProductName.textContent = data.product_name;
+  // Remove scoreProductName as it's not in the new design or should be handled differently
+  if (scoreProductName) scoreProductName.textContent = data.product_name;
 
   // Risk pills
   const pills = document.getElementById("riskPills");
@@ -169,12 +200,11 @@ function renderResults(data) {
       .map(
         (h) => `
       <div class="harmful-item">
-        <div class="risk-dot ${h.risk}"></div>
-        <div>
+        <div class="item-header">
           <div class="item-name">${h.name}</div>
-          <div class="item-reason">${h.reason}</div>
+          <span class="item-badge ${h.risk}">${h.risk}</span>
         </div>
-        <span class="item-badge ${h.risk}">${h.risk}</span>
+        <div class="item-reason">${h.reason}</div>
       </div>
     `,
       )
@@ -396,15 +426,15 @@ function displayProductInsights(data) {
   // Display main concerns
   if (data.main_concerns && data.main_concerns.length > 0) {
     riskFactors.innerHTML = `
-      <div style="margin-top: 15px;">
-        <h4 style="margin-bottom: 10px; color: #333;">Main Health Concerns:</h4>
+      <div class="concerns-container">
+        <h4 class="card-title">Main Health Concerns:</h4>
         ${data.main_concerns
           .map(
             (concern) => `
-          <div style="background-color: #fff3cd; border-left: 4px solid #ff6b6b; padding: 12px; margin-bottom: 10px; border-radius: 4px;">
-            <div style="font-weight: bold; color: #d32f2f; margin-bottom: 5px;">${concern.concern}</div>
-            <div style="color: #555; font-size: 14px; line-height: 1.5;">${concern.impact}</div>
-            ${concern.found_in && concern.found_in.length > 0 ? `<div style="color: #666; font-size: 12px; margin-top: 5px;">Found in: ${concern.found_in.join(", ")}</div>` : ""}
+          <div class="concern-item">
+            <div class="concern-title">${concern.concern}</div>
+            <div class="concern-impact">${concern.impact}</div>
+            ${concern.found_in && concern.found_in.length > 0 ? `<div class="concern-source">Found in: ${concern.found_in.join(", ")}</div>` : ""}
           </div>
         `,
           )
@@ -418,13 +448,13 @@ function displayProductInsights(data) {
   // Display key issues
   if (data.key_issues && data.key_issues.length > 0) {
     diseasesAssociated.innerHTML = `
-      <div style="margin-top: 15px;">
-        <h4 style="margin-bottom: 10px; color: #333;">Key Issues:</h4>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <div class="key-issues-container">
+        <h4 class="card-title">Key Issues:</h4>
+        <div class="allergen-list">
           ${data.key_issues
             .map(
               (issue) => `
-            <span style="background-color: #e74c3c; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">
+            <span class="allergen-tag">
               ${issue}
             </span>
           `,
@@ -439,9 +469,9 @@ function displayProductInsights(data) {
 
   // Display recommendation
   recommendationBox.innerHTML = `
-    <div style="background-color: #ecf0f1; border-left: 4px solid #3498db; padding: 15px; margin-top: 15px; border-radius: 4px;">
-      <h4 style="margin-top: 0; margin-bottom: 10px; color: #2c3e50;">📋 Recommendation:</h4>
-      <div style="color: #34495e; font-size: 14px; line-height: 1.6; font-weight: 500;">${data.recommendation}</div>
+    <div class="recommendation-box">
+      <h4 class="card-title">📋 Recommendation:</h4>
+      <div class="recommendation-text">${data.recommendation}</div>
     </div>
   `;
 }

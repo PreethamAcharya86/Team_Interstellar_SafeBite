@@ -1,7 +1,28 @@
-/* SafeBite - Product Comparison Logic */
+// ── Configuration ──────────────────────────────────────────
+const API_BASE = ""; // Relative paths for same-origin requests
 
-const API_BASE = "http://localhost:5000"; // relative, same origin as Flask
-let errorContainer = null;
+// ── Hero Mouse Tracking ───────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  const hero = document.querySelector(".hero");
+  if (hero) {
+    hero.addEventListener("mousemove", (e) => {
+      const { clientX, clientY } = e;
+      const { left, top, width, height } = hero.getBoundingClientRect();
+      
+      const x = ((clientX - left) / width) * 100;
+      const y = ((clientY - top) / height) * 100;
+      
+      hero.style.setProperty("--mouse-x", `${x}%`);
+      hero.style.setProperty("--mouse-y", `${y}%`);
+      
+      // Subtly shift dots in opposite direction
+      const dx = (x - 50) * 0.2;
+      const dy = (y - 50) * 0.2;
+      hero.style.setProperty("--dot-x", `${-dx}px`);
+      hero.style.setProperty("--dot-y", `${-dy}px`);
+    });
+  }
+});
 
 // ── Sample Products for Demo ──────────────────────────────
 const SAMPLE_COMPARISONS = [
@@ -146,21 +167,14 @@ compareForm.addEventListener("submit", async (e) => {
 
     if (!response.ok) {
       const errorMsg = data.error || "Comparison failed";
-      const suggestion =
-        response.status === 500
-          ? "The server encountered an error. Please try again."
-          : "Try different product names or check your internet connection.";
-      showError(errorMsg, suggestion);
+      showError(errorMsg, "Try different product names or check your internet connection.");
       return;
     }
 
     renderComparison(data);
   } catch (err) {
     console.error(err);
-    showError(
-      "Network error",
-      "Could not connect to the server. Make sure the backend is running.",
-    );
+    showError("Network error", "Could not connect to the server.");
   } finally {
     showLoading(false);
     compareBtn.disabled = false;
@@ -170,6 +184,13 @@ compareForm.addEventListener("submit", async (e) => {
 // ── Render Comparison Results ────────────────────────────
 function renderComparison(data) {
   comparisonResults.classList.remove("hidden");
+  
+  // Add animation class to children
+  const sections = comparisonResults.children;
+  Array.from(sections).forEach((section, index) => {
+    section.classList.add("animate-fade-in");
+    section.style.animationDelay = `${index * 0.15}s`;
+  });
 
   const product1 = data.product_1;
   const product2 = data.product_2;
@@ -243,24 +264,24 @@ function renderScoreCard(product) {
   const badge = product.score_badge || getRatingText(product.health_score);
 
   return `
-    <div class="score-card-compare ${colorClass}">
+    <div class="score-card-compare">
       <div class="score-header">
         <div class="score-product">${product.product_name}</div>
         <div class="score-category">${product.category}</div>
       </div>
       <div class="score-display">
-        <div class="score-number">${product.health_score.toFixed(1)}</div>
+        <div class="score-number ${colorClass}">${product.health_score.toFixed(1)}</div>
         <div class="score-max">/ 5.0</div>
       </div>
       <div class="score-stars">${stars}</div>
-      <div class="score-badge ${colorClass}">${badge}</div>
-      <div class="risk-summary-pills">
-        <div class="pill safe">✅ ${rc.safe || 0}</div>
-        <div class="pill low">🟢 ${rc.low || 0}</div>
-        <div class="pill medium">🟡 ${rc.medium || 0}</div>
-        <div class="pill high">🔴 ${rc.high || 0}</div>
+      <div class="score-badge-el ${colorClass}">${badge}</div>
+      <div class="risk-pills" style="justify-content: center; margin-top: 20px;">
+        <div class="risk-pill safe">✅ ${rc.safe || 0}</div>
+        <div class="risk-pill low">🟢 ${rc.low || 0}</div>
+        <div class="risk-pill medium">🟡 ${rc.medium || 0}</div>
+        <div class="risk-pill high">🔴 ${rc.high || 0}</div>
       </div>
-      <div class="harmful-count">🚨 Harmful: ${product.harmful_count || 0}</div>
+      <div class="harmful-count" style="margin-top: 10px;">🚨 Harmful: ${product.harmful_count || 0}</div>
     </div>
   `;
 }
@@ -290,12 +311,11 @@ function renderHarmfulComparison(product1, product2) {
       .map(
         (h) => `
       <div class="harmful-item">
-        <div class="risk-dot ${h.risk}"></div>
-        <div class="item-details">
+        <div class="item-header">
           <div class="item-name">${h.name}</div>
-          <div class="item-reason">${h.reason}</div>
+          <span class="item-badge ${h.risk}">${h.risk}</span>
         </div>
-        <span class="item-badge ${h.risk}">${h.risk}</span>
+        <div class="item-reason">${h.reason}</div>
       </div>
     `,
       )
@@ -313,12 +333,11 @@ function renderHarmfulComparison(product1, product2) {
       .map(
         (h) => `
       <div class="harmful-item">
-        <div class="risk-dot ${h.risk}"></div>
-        <div class="item-details">
+        <div class="item-header">
           <div class="item-name">${h.name}</div>
-          <div class="item-reason">${h.reason}</div>
+          <span class="item-badge ${h.risk}">${h.risk}</span>
         </div>
-        <span class="item-badge ${h.risk}">${h.risk}</span>
+        <div class="item-reason">${h.reason}</div>
       </div>
     `,
       )
@@ -470,10 +489,9 @@ function renderRecommendation(winner, product1, product2) {
 
 // ── Utility Functions ────────────────────────────────────
 function getColorClass(score) {
-  if (score >= 4) return "excellent";
-  if (score >= 3) return "good";
-  if (score >= 2) return "fair";
-  return "poor";
+  if (score >= 4.0) return "green";
+  if (score >= 2.5) return "amber";
+  return "red";
 }
 
 function getStars(score) {

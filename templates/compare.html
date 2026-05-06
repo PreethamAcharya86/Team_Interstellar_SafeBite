@@ -55,15 +55,18 @@
       <form id="compareForm">
         <div class="compare-form-row">
           <!-- Product 1 -->
-          <div class="product-column">
+          <div class="product-column card">
             <h3 class="column-title">Product 1️⃣</h3>
             <div class="form-group">
               <label for="product1Name">Product Name <span class="required">*</span></label>
-              <input type="text" id="product1Name" placeholder="e.g. Kurkure Masala Munch" required />
+              <div class="input-wrapper">
+                <span class="input-icon">🔍</span>
+                <input type="text" id="product1Name" placeholder="e.g. Kurkure" class="input-enhanced" required />
+              </div>
             </div>
             <div class="form-group">
               <label for="category1">Category <span class="required">*</span></label>
-              <select id="category1" required>
+              <select id="category1" class="input-enhanced" required>
                 <option value="">Select category</option>
                 <option value="snacks">🍟 Snacks</option>
                 <option value="biscuits">🍪 Biscuits</option>
@@ -73,18 +76,23 @@
           </div>
 
           <!-- Divider -->
-          <div class="divider-col">VS</div>
+          <div class="divider-col">
+            <div class="vs-badge">VS</div>
+          </div>
 
           <!-- Product 2 -->
-          <div class="product-column">
+          <div class="product-column card">
             <h3 class="column-title">Product 2️⃣</h3>
             <div class="form-group">
               <label for="product2Name">Product Name <span class="required">*</span></label>
-              <input type="text" id="product2Name" placeholder="e.g. Britannia NutriChoice" required />
+              <div class="input-wrapper">
+                <span class="input-icon">🔍</span>
+                <input type="text" id="product2Name" placeholder="e.g. NutriChoice" class="input-enhanced" required />
+              </div>
             </div>
             <div class="form-group">
               <label for="category2">Category <span class="required">*</span></label>
-              <select id="category2" required>
+              <select id="category2" class="input-enhanced" required>
                 <option value="">Select category</option>
                 <option value="snacks">🍟 Snacks</option>
                 <option value="biscuits">🍪 Biscuits</option>
